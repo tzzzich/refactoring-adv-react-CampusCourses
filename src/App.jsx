@@ -4,7 +4,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Root } from './routes/root';
 import { ROUTES } from './utils/constants/router';  
 import Home from './routes/home';
-
+import RegistrationPage from './routes/registration';
+import LoginPage from './routes/login';
+import ProfilePage from './routes/profile';
+import GroupsPage from './routes/groups';
 
 const router = createBrowserRouter([
   {
@@ -15,7 +18,22 @@ const router = createBrowserRouter([
         path: ROUTES.ROOT,
         element: <Home />,
       },
-      
+      {
+        path: ROUTES.REGISTRATION,
+        element: <RegistrationPage />,
+      },
+      {
+        path: ROUTES.LOGIN,
+        element: <LoginPage />,
+      },
+      {
+        path: ROUTES.PROFILE,
+        element: <ProfilePage />,
+      },
+      {
+        path: ROUTES.GROUPS,
+        element: <GroupsPage />,
+      },
     ],
   },
   
