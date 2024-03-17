@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {Button, Form, Row, Card} from 'react-bootstrap';
 import Password from '../components/ui/Password';
 
@@ -9,7 +9,6 @@ function LoginPage() {
     const [validated, setValidated] = useState(false);
     const [error, setErrors] = useState('')
 
-    localStorage.setItem("token", null);
 
     const handleSubmit = async (event) => {
         event.preventDefault();

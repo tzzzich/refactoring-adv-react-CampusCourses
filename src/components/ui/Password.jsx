@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import {Button, Col, Form, InputGroup, Row, Card} from 'react-bootstrap';
+import {Form} from 'react-bootstrap';
 
 const Password = ({name, labelName, id}) => {
     const [passwordError, setPasswordError] = useState('Пожалуйста, введите пароль.');
@@ -21,7 +21,7 @@ const Password = ({name, labelName, id}) => {
       const passwordId = "password" + id;
       
     return (
-        <Form.Group controlId="passwordId">
+        <Form.Group controlId={passwordId}>
             <Form.Label>{labelName}</Form.Label>
             <Form.Control
                 type="password"
