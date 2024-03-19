@@ -1,8 +1,8 @@
 import { api } from '../instance';
 
-export const getGroups = async (data) => {
+export const getGroups = async () => {
     try {
-      const response = await api.get('/groups', data);
+      const response = await api.get('/groups');
       console.log(response.data);
       return response;
     } catch (error) {
@@ -36,3 +36,12 @@ export const getGroups = async (data) => {
       //console.error(error);
     }
   }
+
+  export const getGroupDetails = async (id) => {
+    try {
+      const response = await api.get(`/groups/${id}`);
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  };

@@ -4,6 +4,6 @@ export const ROUTES = {
     REGISTRATION: '/registration',
     PROFILE: '/profile',
     GROUPS: '/groups',
-    GROUP: '/groups:id',
+    GROUP: '/groups/:id',
   };
   

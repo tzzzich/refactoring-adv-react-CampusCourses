@@ -11,7 +11,7 @@ const GroupListElement = ({isAdmin, group}) => {
                     action 
                     className="d-flex justify-content-between align-items-center"
                 >
-                    <Link to={`/groups/${group.id}`} style={{ textDecoration: 'none', textColor:'inherit' }}>
+                    <Link to={`/groups/${group.id}`} state={{groupTitle:group.name}} style={{ textDecoration: 'none', textColor:'inherit' }}>
                         {group.name}
                     </Link>
                     {
