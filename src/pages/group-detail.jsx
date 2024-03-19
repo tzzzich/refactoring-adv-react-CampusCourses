@@ -3,8 +3,8 @@ import { useQuery } from '@tanstack/react-query';
 import { Spinner, ListGroup, Card } from 'react-bootstrap';
 import { useState, useEffect} from 'react';
 import { useParams, useLocation } from 'react-router-dom';
-import GroupChangeBttn from '../components/ui/GroupChangeBttn';
-import CourseListElement from '../components/CourseListIElement';
+import GroupChangeBttn from '../components/group-page/GroupChangeBttn';
+import CourseListElement from '../components/group-courses-page/CourseListIElement';
 
 
 const GroupDetail = () => {

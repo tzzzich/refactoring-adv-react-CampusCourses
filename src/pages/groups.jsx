@@ -1,9 +1,9 @@
 import { getGroups, getRoles } from '../utils/api/requests';
 import { useQuery } from '@tanstack/react-query';
 import { Spinner, ListGroup, Card } from 'react-bootstrap';
-import GroupListElement from '../components/GroupListElement';
+import GroupListElement from '../components/group-page/GroupListElement';
 import { useState, useEffect } from 'react';
-import GroupChangeBttn from '../components/ui/GroupChangeBttn';
+import GroupChangeBttn from '../components/group-page/GroupChangeBttn';
 
 
 const GroupsPage = () => {

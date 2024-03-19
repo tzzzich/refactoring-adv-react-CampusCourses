@@ -2,9 +2,9 @@ import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import { Link} from 'react-router-dom';
-import { getMyCourses, getProfile, getRoles } from '../utils/api/requests';
+import { getMyCourses, getProfile, getRoles } from '../../utils/api/requests';
 import { useEffect, useState } from 'react';
-import LogoutBttn from './ui/LogoutBttn';
+import LogoutBttn from './LogoutBttn';
 
 
 function Header() {

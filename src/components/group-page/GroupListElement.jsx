@@ -1,7 +1,7 @@
 import { ListGroup, Button, Modal, Form, InputGroup, Row} from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import GroupChangeBttn from './ui/GroupChangeBttn';
-import GroupDeleteBttn from './ui/GroupDeleteBttn';
+import GroupChangeBttn from './GroupChangeBttn';
+import GroupDeleteBttn from './GroupDeleteBttn';
 
 const GroupListElement = ({isAdmin, group}) => {
       
