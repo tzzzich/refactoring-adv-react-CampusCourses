@@ -1,15 +1,21 @@
-import { getGroups, getRoles } from '../utils/api/requests';
+import { getGroups, getRoles, createGroup } from '../utils/api/requests';
 import { useQuery } from '@tanstack/react-query';
-import { Spinner, ListGroup, Card } from 'react-bootstrap';
+import { Spinner, ListGroup, Card, Button } from 'react-bootstrap';
 import GroupListElement from '../components/group-page/GroupListElement';
 import { useState, useEffect } from 'react';
-import GroupChangeBttn from '../components/group-page/GroupChangeBttn';
+import GroupCreateModal from '../components/group-page/GroupCreateModal';
 
 
 const GroupsPage = () => {
 
   const [rolesData, setRoles] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showGroupCreateModal, setShowGroupCreateModal] = useState(false);
+  const [groupCreateValidated, setgroupCreateValidated] = useState(false);
+
+    const toggleGroupCreateModal = () => {
+        setShowGroupCreateModal(!showGroupCreateModal);
+    }
 
   useEffect(() => {
       async function getUserRoles(){
@@ -19,8 +25,6 @@ const GroupsPage = () => {
       }
       getUserRoles();
   }, []);
-
-  console.log(rolesData);
   
   const getGroupsQuery = useQuery({
     queryKey: ['groups'],
@@ -32,7 +36,25 @@ const GroupsPage = () => {
     }
   });
 
-
+  const handleCreateGroupSubmit = async (event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    if (form.checkValidity() === false) {
+      event.stopPropagation();
+      setgroupCreateValidated(true);
+    } else {
+        setgroupCreateValidated(true);
+        try{
+            await createGroup( {
+                name: event.target.name.value
+            })
+            window.location.reload();
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+};
 
   return (
     < div style={{ width: '80%', margin: '0 auto' }}>
@@ -44,7 +66,21 @@ const GroupsPage = () => {
           </div>
         ) : (
           <>
-          {rolesData.isAdmin && <GroupChangeBttn isCreate={true} className='m-5'/>}
+          {rolesData.isAdmin && (
+            <>
+              <Button className="m-1" onClick={toggleGroupCreateModal}>
+                  Создать
+              </Button>
+
+              <GroupCreateModal 
+                show={showGroupCreateModal}
+                onClose={toggleGroupCreateModal}
+                handleSubmit={ handleCreateGroupSubmit}
+                validated = {groupCreateValidated}
+              />
+            </>
+
+          )}
             <Card className='mt-3'>
               <ListGroup variant="flush" className="w-100">
                 {getGroupsQuery.data}
@@ -53,7 +89,7 @@ const GroupsPage = () => {
           </>
         )
       }
-      </div>
+    </div>
   );
 }
 

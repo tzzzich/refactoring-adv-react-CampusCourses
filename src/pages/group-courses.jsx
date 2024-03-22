@@ -1,13 +1,13 @@
-import { getGroupDetails, getRoles } from '../utils/api/requests';
+import { getGroupCourses, getRoles } from '../utils/api/requests';
 import { useQuery } from '@tanstack/react-query';
 import { Spinner, ListGroup, Card } from 'react-bootstrap';
 import { useState, useEffect} from 'react';
 import { useParams, useLocation } from 'react-router-dom';
-import GroupChangeBttn from '../components/group-page/GroupChangeBttn';
+import GroupChangeBttn from '../components/group-page/GroupEditModal.jsx';
 import CourseListElement from '../components/group-courses-page/CourseListIElement';
 
 
-const GroupDetail = () => {
+const GroupCourses = () => {
     const { id } = useParams();
     const {state} = useLocation()
 
@@ -23,23 +23,23 @@ const GroupDetail = () => {
         getUserRoles();
     }, []);
   
-    const getGroupDetailsQuery = useQuery({
+    const getGroupCoursesQuery = useQuery({
         queryKey: ['courses'],
-        queryFn: () => getGroupDetails(id), 
+        queryFn: () => getGroupCourses(id), 
         select: ({ data }) => {
             return data.map((course) => (
-                <CourseListElement course={course} id ={course.id}/>
+                <CourseListElement course={course} id ={course.id} key={course.id}/>
             ));
         }
     });
     
-    console.log(getGroupDetailsQuery.data)
+    console.log(getGroupCoursesQuery.data)
 
     return (
         < div style={{ width: '80%', margin: '0 auto' }}>
             <h1 className='m-5'>Группа - {state.groupTitle}</h1>
             {
-                getGroupDetailsQuery.isLoading || loading ? (
+                getGroupCoursesQuery.isLoading || loading ? (
                 <div className="w-100 d-flex justify-content-center align-items-center">
                     <Spinner animation="border" />
                 </div>
@@ -47,12 +47,12 @@ const GroupDetail = () => {
                 <>
                 {rolesData.isAdmin && <GroupChangeBttn isCreate={true} className='m-5'/>}
                     <Card className='mt-3'>
-                        {getGroupDetailsQuery.data.length > 0 && (
+                        {getGroupCoursesQuery.data.length > 0 && (
                             <ListGroup variant="flush" className="w-100">
-                                {getGroupDetailsQuery.data}
+                                {getGroupCoursesQuery.data}
                             </ListGroup>
                         )}
-                        { getGroupDetailsQuery.data.length == 0 && (<h3 className='m-5'>К сожалению, курсов в этой группе ещё нет.</h3>)}
+                        { getGroupCoursesQuery.data.length == 0 && (<h3 className='m-5'>К сожалению, курсов в этой группе ещё нет.</h3>)}
                     </Card>
                 </>
                 )
@@ -61,4 +61,4 @@ const GroupDetail = () => {
     );
 }
 
-export default GroupDetail
+export default GroupCourses

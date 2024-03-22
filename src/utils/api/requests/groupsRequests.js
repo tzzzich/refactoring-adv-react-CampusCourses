@@ -10,7 +10,7 @@ export const getGroups = async () => {
     }
   };
 
-  export const putGroup = async (data, id) => {
+  export const editGroup = async (data, id) => {
     try {
       console.log(data);
       const response = await api.put(`/groups/${id}`, data);
@@ -20,7 +20,7 @@ export const getGroups = async () => {
     }
   };
 
-  export const postGroup = async (data) => {
+  export const createGroup = async (data) => {
     try {
       const response = await api.post('/groups', data);
       return response.data;
@@ -37,7 +37,7 @@ export const getGroups = async () => {
     }
   }
 
-  export const getGroupDetails = async (id) => {
+  export const getGroupCourses = async (id) => {
     try {
       const response = await api.get(`/groups/${id}`);
       return response;

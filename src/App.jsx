@@ -8,7 +8,7 @@ import RegistrationPage from './pages/registration';
 import LoginPage from './pages/login';
 import ProfilePage from './pages/profile';
 import GroupsPage from './pages/groups';
-import GroupDetail from './pages/group-detail';
+import GroupCourses from './pages/group-courses';
 
 const router = createBrowserRouter([
   {
@@ -37,7 +37,7 @@ const router = createBrowserRouter([
       },
       {
         path: ROUTES.GROUP,
-        element: <GroupDetail />
+        element: <GroupCourses />
       },
     ],
   },

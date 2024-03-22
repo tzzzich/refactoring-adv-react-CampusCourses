@@ -1,9 +1,54 @@
-import { ListGroup, Button, Modal, Form, InputGroup, Row} from 'react-bootstrap';
+import { useState } from 'react';
+import { editGroup, deleteGroup } from '../../utils/api/requests';
+import { ListGroup, Button} from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import GroupChangeBttn from './GroupChangeBttn';
-import GroupDeleteBttn from './GroupDeleteBttn';
+import GroupDeleteModal from './GroupDeleteModal';
+import GroupEditModal from './GroupEditModal';
 
 const GroupListElement = ({isAdmin, group}) => {
+
+    const [showGroupDeleteModal, setShowGroupDeleteModal] = useState(false);
+    const [showGroupEditModal, setShowGroupEditModal] = useState(false);
+    const [groupEditValidated, setgroupEditValidated] = useState(false);
+
+    const toggleGroupDeleteModal = () => {
+        setShowGroupDeleteModal(!showGroupDeleteModal);
+    }
+
+    const toggleGroupEditModal = () => {
+        setShowGroupEditModal(!showGroupEditModal);
+    }
+
+    const handleDelete = async (event) => {
+        try{
+            await deleteGroup(group.id);
+            window.location.reload();
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+
+    const handleEditGroupSubmit = async (event) => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        if (form.checkValidity() === false) {
+          event.stopPropagation();
+          setgroupEditValidated(true);
+        } else {
+            setgroupEditValidated(true);
+            try{
+                await editGroup( {
+                    name: event.target.name.value
+                }, group.id )
+                window.location.reload();
+            }
+            catch (error) {
+                console.log(error);
+            }
+        }
+    };
+
       
     return (
         <>
@@ -18,9 +63,26 @@ const GroupListElement = ({isAdmin, group}) => {
                         isAdmin ? (
                         <>  
                             <div>
-                                <GroupChangeBttn id ={group.id} defaultName={group.name}/>
-                                <GroupDeleteBttn id ={group.id}/>
+                                <Button variant='warning' className="m-1" onClick={toggleGroupEditModal}>
+                                    РЕДАКТИРОВАТЬ
+                                </Button>
+
+                                <Button variant="danger" className="m-1" onClick={toggleGroupDeleteModal}>
+                                    УДАЛИТЬ
+                                </Button>
                             </div>
+                            <GroupDeleteModal 
+                                toggleGroupDeleteModal={toggleGroupDeleteModal}
+                                showGroupDeleteModal={showGroupDeleteModal}
+                                handleDelete={handleDelete}
+                            />
+                            <GroupEditModal
+                                show={showGroupEditModal}
+                                onClose={toggleGroupEditModal}
+                                handleSubmit={ handleEditGroupSubmit}
+                                defaultName={group.name}
+                                validated = {groupEditValidated}
+                            />
                         </>
                         ) : (
                             <></>
