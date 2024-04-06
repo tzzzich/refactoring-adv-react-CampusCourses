@@ -2,7 +2,7 @@ import Modal from 'react-bootstrap/Modal';
 
 
 const ModalBase = ({ show, onClose,
-    title, bodyChildren, footerChildren }) => {
+    title, bodyChildren, footerChildren, size }) => {
 
 
     return (
@@ -12,6 +12,7 @@ const ModalBase = ({ show, onClose,
             backdrop="static"
             keyboard={false}
             aria-labelledby="contained-modal-title-vcenter"
+            size={size}
             centered
         >
             <Modal.Header closeButton>

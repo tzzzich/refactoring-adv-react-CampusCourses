@@ -1,10 +1,10 @@
-import { getGroupCourses, getRoles } from '../utils/api/requests';
+import { createCourse, getGroupCourses, getRoles } from '../utils/api/requests';
 import { useQuery } from '@tanstack/react-query';
-import { Spinner, ListGroup, Card } from 'react-bootstrap';
+import { Spinner, ListGroup, Card, Button } from 'react-bootstrap';
 import { useState, useEffect} from 'react';
 import { useParams, useLocation } from 'react-router-dom';
-import GroupChangeBttn from '../components/group-page/GroupEditModal.jsx';
 import CourseListElement from '../components/group-courses-page/CourseListIElement';
+import CourseCreateModal from '../components/group-courses-page/CourseCreateModal';
 
 
 const GroupCourses = () => {
@@ -13,6 +13,8 @@ const GroupCourses = () => {
 
     const [rolesData, setRoles] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [showCourseCreateModal, setShowCourseCreateModal] = useState(false);
+    const [courseCreateValidated, setCourseCreateValidated] = useState(false);
 
     useEffect(() => {
         async function getUserRoles(){
@@ -32,8 +34,37 @@ const GroupCourses = () => {
             ));
         }
     });
+
+    const toggleCourseCreateModal = () => {
+        setShowCourseCreateModal(!showCourseCreateModal);
+    }
+
+    const handleCourseCreateSubmit = async (event) => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        if (form.checkValidity() === false) {
+          event.stopPropagation();
+          setCourseCreateValidated(true);
+        } else {
+            setCourseCreateValidated(true);
+            try{
+                await createCourse( {
+                    name: event.target.name.value,
+                    startYear: event.target.startYear.value,
+                    maximumStudentsCount: event.target.maximumStudentsCount,
+                    semester: event.target.semester.value,
+                    requirements: event.target.requirements.value,
+                    annotations: event.target.annotations.value,
+                    mainTeacherId: event.target.mainTeacherId.value
+                })
+                window.location.reload();
+            }
+            catch (error) {
+                //console.log(error);
+            }
+        }
+    };
     
-    console.log(getGroupCoursesQuery.data)
 
     return (
         < div style={{ width: '80%', margin: '0 auto' }}>
@@ -45,7 +76,18 @@ const GroupCourses = () => {
                 </div>
                 ) : (
                 <>
-                {rolesData.isAdmin && <GroupChangeBttn isCreate={true} className='m-5'/>}
+                {rolesData.isAdmin && 
+                (<>
+                    <Button className="m-1" onClick={toggleCourseCreateModal}>
+                        Создать
+                    </Button>
+                    <CourseCreateModal
+                        show={showCourseCreateModal}
+                        onClose={toggleCourseCreateModal}
+                        handleSubmit={handleCourseCreateSubmit}
+                        validated={courseCreateValidated}
+                    />
+                </>)}
                     <Card className='mt-3'>
                         {getGroupCoursesQuery.data.length > 0 && (
                             <ListGroup variant="flush" className="w-100">

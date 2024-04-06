@@ -63,3 +63,12 @@ export async function getMyCourses () {
       //  console.error(error);
     }
 }
+
+export const getAllUsers = async () => {
+  try {
+    const response = await api.get(`/users`);
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};

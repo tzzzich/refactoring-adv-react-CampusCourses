@@ -13,10 +13,6 @@ const GroupsPage = () => {
   const [showGroupCreateModal, setShowGroupCreateModal] = useState(false);
   const [groupCreateValidated, setgroupCreateValidated] = useState(false);
 
-    const toggleGroupCreateModal = () => {
-        setShowGroupCreateModal(!showGroupCreateModal);
-    }
-
   useEffect(() => {
       async function getUserRoles(){
           const response = await getRoles();
@@ -55,6 +51,10 @@ const GroupsPage = () => {
         }
     }
 };
+
+  const toggleGroupCreateModal = () => {
+    setShowGroupCreateModal(!showGroupCreateModal);
+  }
 
   return (
     < div style={{ width: '80%', margin: '0 auto' }}>
