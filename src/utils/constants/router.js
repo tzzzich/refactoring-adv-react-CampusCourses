@@ -5,5 +5,6 @@ export const ROUTES = {
     PROFILE: '/profile',
     GROUPS: '/groups',
     GROUP: '/groups/:id',
+    COURSE: '/courses/:id',
   };
   

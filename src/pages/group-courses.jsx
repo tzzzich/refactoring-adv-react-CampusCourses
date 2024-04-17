@@ -51,12 +51,12 @@ const GroupCourses = () => {
                 await createCourse( {
                     name: event.target.name.value,
                     startYear: event.target.startYear.value,
-                    maximumStudentsCount: event.target.maximumStudentsCount,
+                    maximumStudentsCount: event.target.maximumStudentsCount.value,
                     semester: event.target.semester.value,
                     requirements: event.target.requirements.value,
                     annotations: event.target.annotations.value,
                     mainTeacherId: event.target.mainTeacherId.value
-                })
+                }, id)
                 window.location.reload();
             }
             catch (error) {
@@ -88,7 +88,7 @@ const GroupCourses = () => {
                         validated={courseCreateValidated}
                     />
                 </>)}
-                    <Card className='mt-3'>
+                    <Card className='m-5'>
                         {getGroupCoursesQuery.data.length > 0 && (
                             <ListGroup variant="flush" className="w-100">
                                 {getGroupCoursesQuery.data}

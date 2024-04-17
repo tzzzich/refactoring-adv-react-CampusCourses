@@ -81,7 +81,7 @@ const GroupsPage = () => {
             </>
 
           )}
-            <Card className='mt-3'>
+            <Card className='mt-3 mb-3'>
               <ListGroup variant="flush" className="w-100">
                 {getGroupsQuery.data}
               </ListGroup>

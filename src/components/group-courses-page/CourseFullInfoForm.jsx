@@ -2,9 +2,12 @@ import { Form, Row} from 'react-bootstrap'
 import { useQuery } from '@tanstack/react-query';
 import { getAllUsers } from '../../utils/api/requests';
 import RichTextFormControl from '../ui/RichTextFormControl'
+import { useState } from 'react';
 
 
 const CourseFullInfoForm = ({handleSubmit, validated}) => {
+
+    const [semesterData, setSemesterData] = useState(null);
 
     const getAllUsersQuery = useQuery({
         queryKey: ['users'],
@@ -16,6 +19,10 @@ const CourseFullInfoForm = ({handleSubmit, validated}) => {
             ));
         }
     });
+
+    const handleSemesterChange = (event) => {
+        setSemesterData(event.target.value);
+    }
 
     return (
         <>
@@ -41,10 +48,11 @@ const CourseFullInfoForm = ({handleSubmit, validated}) => {
                             type="number"
                             required
                             defaultValue={''}
-                            min={1900}
+                            min={2000}
+                            max={2029}
                             name="startYear" />
                         <Form.Control.Feedback type="invalid">
-                            Требуется ввести значение не меньше 1900.
+                            Требуется ввести значение между 2000 и 2029.
                         </Form.Control.Feedback>
                     </Form.Group>
                 </Row>
@@ -65,7 +73,7 @@ const CourseFullInfoForm = ({handleSubmit, validated}) => {
                 <Row className="mb-3">
                     <Form.Group controlId="semester">
                         <Form.Label>Семестр</Form.Label>
-                        <div key={`inline-radio`} className="mb-3">
+                        <div>
                             <Form.Check
                                 inline
                                 label="Осенний"
@@ -73,6 +81,7 @@ const CourseFullInfoForm = ({handleSubmit, validated}) => {
                                 name="semester"
                                 type='radio'
                                 id={`semester-radio-1`}
+                                onChange={handleSemesterChange}
                             />
                             <Form.Check
                                 inline
@@ -80,13 +89,26 @@ const CourseFullInfoForm = ({handleSubmit, validated}) => {
                                 value="Spring"
                                 name="semester"
                                 type='radio'
+                                required
                                 id={`semester-radio-2`}
+                                onChange={handleSemesterChange}
                             />
+                            {
+                                validated==true && !semesterData && (
+                                    <div>
+                                        <Form.Text className='text-danger'>
+                                            Пожалуйста, выберите значение.
+                                        </Form.Text>
+                                    </div>
+                                )
+                            }
+                            
                         </div>
                     </Form.Group>
                 </Row>
                 <Row className="mb-3">
                     <RichTextFormControl controlId="requirements" label="Требования" />
+                    
                 </Row>
                 <Row className="mb-3">
                     <RichTextFormControl 

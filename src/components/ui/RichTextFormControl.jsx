@@ -3,33 +3,30 @@ import { Form } from 'react-bootstrap';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 
-const RichTextFormControl = ({ controlId, label, required, validated }) => {
-    const [editorData, setEditorData] = useState('');
-    const [isValid, setIsValid] = useState(true);
+const RichTextFormControl = ({ controlId, label, defaultValue}) => {
+    const [editorData, setEditorData] = useState(defaultValue);
 
     const handleEditorChange = (event, editor) => {
         const data = editor.getData();
         setEditorData(data);
-        setIsValid(data.trim().length > 0); 
     };
 
     return (
         <Form.Group controlId={controlId}>
             <Form.Label>{label}</Form.Label>
             <CKEditor
-                editor={ClassicEditor}
-                data={editorData}
-                onChange={handleEditorChange}
-            />
+                    editor={ ClassicEditor }
+                    onChange={ handleEditorChange}
+                    data={defaultValue}
+                />
             <Form.Control
-                as="textarea"
-                rows={6}
+                type='hidden'
+                name={controlId}
                 value={editorData}
-                onChange={(e) => setEditorData(e.target.value)}
-                style={{ display: 'none' }}
+                required
             />
-            <Form.Control.Feedback type="invalid">
-                Please provide a valid text.
+             <Form.Control.Feedback type="invalid">
+                Поле не может быть пустым.
             </Form.Control.Feedback>
         </Form.Group>
     );
