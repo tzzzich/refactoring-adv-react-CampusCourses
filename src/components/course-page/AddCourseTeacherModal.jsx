@@ -17,7 +17,7 @@ const TeacherAddModal = ({show, onClose, handleSubmit,
                     return !isTeacher && !isStudent;
                 });
                 return potentialUsers.map((user) => (
-                    <option value={user.id}>{user.fullName}</option>
+                    <option key={user.id}value={user.id}>{user.fullName}</option>
                 ));
             }
         });

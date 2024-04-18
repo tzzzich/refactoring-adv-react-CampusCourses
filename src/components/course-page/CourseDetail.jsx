@@ -76,7 +76,7 @@ function CourseDetail({course, isAdmin, isTeacher, isMainTeacher, isStudent, set
 
           }
           catch (error) {
-              console.log(error);
+            swal("Произошла ошибка!", error, "error");
           }
       }
   };
@@ -88,9 +88,10 @@ function CourseDetail({course, isAdmin, isTeacher, isMainTeacher, isStudent, set
   async function SignUp() {
     try{
         await signUpForCourse(course.id)
+        swal("Успешно!", "Вы подали заявку на курс!", "success");
     }
     catch (error) {
-        console.log(error);
+      swal("Произошла ошибка при подаче заявки!", error, "error");
     }
   }
   

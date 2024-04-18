@@ -1,10 +1,10 @@
 import { getGroups, getRoles, createGroup } from '../utils/api/requests';
 import { useQuery } from '@tanstack/react-query';
-import { Spinner, ListGroup, Card, Button } from 'react-bootstrap';
-import GroupListElement from '../components/group-page/GroupListElement';
+import { Spinner, Card, Button } from 'react-bootstrap';
 import { useState, useEffect } from 'react';
 import GroupCreateModal from '../components/group-page/GroupCreateModal';
 import swal from 'sweetalert';
+import GroupsList from '../components/group-page/GroupsList';
 
 
 const GroupsPage = () => {
@@ -25,12 +25,12 @@ const GroupsPage = () => {
   
   const getGroupsQuery = useQuery({
     queryKey: ['groups'],
-    queryFn: getGroups,
-    select: ({ data }) => {
-      return data.map((group) => (
-        <GroupListElement group = {group} key={group.id} refetch={refetchGroups} isAdmin = {rolesData.isAdmin}/>
-      ));
-    }
+    queryFn: () => getGroups(),
+    // select: ({ data }) => {
+    //   return data.map((group) => (
+    //     <GroupListElement group = {group} key={group.id} refetch={refetchGroups} isAdmin = {rolesData.isAdmin}/>
+    //   ));
+    // }
   });
 
   const handleCreateGroupSubmit = async (event) => {
@@ -57,6 +57,7 @@ const GroupsPage = () => {
 };
 
   const refetchGroups = () => {
+    console.log('!!!')
       getGroupsQuery.refetch();
   }
 
@@ -90,9 +91,7 @@ const GroupsPage = () => {
 
           )}
             <Card className='mt-3 mb-3'>
-              <ListGroup variant="flush" className="w-100">
-                {getGroupsQuery.data}
-              </ListGroup>
+              <GroupsList data = {getGroupsQuery.data.data} refetch = {refetchGroups} rolesData = {rolesData} />
             </Card>
           </>
         )

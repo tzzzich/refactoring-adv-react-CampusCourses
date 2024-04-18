@@ -1,11 +1,14 @@
+/* eslint-disable react/prop-types */
 import { useState } from 'react';
 import { editGroup, deleteGroup } from '../../utils/api/requests';
 import { ListGroup, Button, Col} from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import GroupDeleteModal from './GroupDeleteModal';
 import GroupEditModal from './GroupEditModal';
+import swal from 'sweetalert';
 
 const GroupListElement = ({isAdmin, group, refetch}) => {
+    // console.log(group);
 
     const [showGroupDeleteModal, setShowGroupDeleteModal] = useState(false);
     const [showGroupEditModal, setShowGroupEditModal] = useState(false);

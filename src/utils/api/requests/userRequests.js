@@ -55,15 +55,6 @@ export async function getRoles () {
     }
   }
 
-export async function getMyCourses () {
-    try {
-        const response = await api.get('/courses/my');
-        return response;
-    } catch (error) {
-      //  console.error(error);
-    }
-}
-
 export const getAllUsers = async () => {
   try {
     const response = await api.get(`/users`);

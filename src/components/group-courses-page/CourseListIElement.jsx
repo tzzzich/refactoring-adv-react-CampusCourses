@@ -1,9 +1,11 @@
+/* eslint-disable react/prop-types */
 import { useEffect } from 'react';
 import { useState, useCallback } from 'react';
 import { Button, ListGroup, Row} from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { deleteCourse } from '../../utils/api/requests';
 import CourseDeleteModal from './CourseDeleteModal';
+import swal from 'sweetalert';
 
 const CourseListElement = ({course, refetch}) => {
 

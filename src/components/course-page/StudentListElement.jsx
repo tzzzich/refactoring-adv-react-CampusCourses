@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Badge, Button, ListGroup} from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import swal from 'sweetalert';
 import { gradeStudent, setStudentRequestStatus } from '../../utils/api/requests';
 import StudentGradeModal from './StudentGradeModal';
 
@@ -83,7 +84,7 @@ const StudentListElement = ({course, student, isAdmin, isStudent, isTeacher, isM
                   }, course.id, student.id )
             }
             catch (error) {
-                console.log(error);
+                swal("Произошла ошибка!", error, "error");
             }
             const fieldName = markType == "Final" ? 'finalResult': 'midtermResult';
             updateStudentField(student.id, fieldName, event.target.mark.value);

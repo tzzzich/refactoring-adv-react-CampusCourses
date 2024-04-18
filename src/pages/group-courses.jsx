@@ -5,6 +5,7 @@ import { useState, useEffect} from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import CourseListElement from '../components/group-courses-page/CourseListIElement';
 import CourseCreateModal from '../components/group-courses-page/CourseCreateModal';
+import swal from 'sweetalert';
 
 
 const GroupCourses = () => {
@@ -24,12 +25,12 @@ const GroupCourses = () => {
         }
         getUserRoles();
     }, []);
-  
+
     const getGroupCoursesQuery = useQuery({
         queryKey: ['courses'],
         queryFn: () => getGroupCourses(id), 
         select: ({ data }) => {
-            console.log(data);
+            // console.log('data:', data);
             return data.map((course) => (
                 <CourseListElement course={course} refetch={refetchCourses} id ={course.id} key={course.id}/>
             ));

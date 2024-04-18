@@ -35,13 +35,13 @@ function Header() {
     getUserProfile();
   }, []);
 
-  useEffect(() => {
-    async function getUserCourses(){
-        const response = await getMyCourses();
-        setCoursesData(response.data);
-    }
-    getUserCourses();
-  }, []);
+  // useEffect(() => {
+  //   async function getUserCourses(){
+  //       const response = await getMyCourses();
+  //       setCoursesData(response.data);
+  //   }
+  //   getUserCourses();
+  // }, []);
 
   const toggleLogoutModal = () => {
       setShowLogoutModal(!showLogoutModal);

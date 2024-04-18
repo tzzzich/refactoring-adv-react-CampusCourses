@@ -87,10 +87,10 @@ function CourseDetailTab({course, isAdmin, isTeacher, isMainTeacher, isStudent, 
                         {(isAdmin || isTeacher) &&<div><Button className="mb-3" onClick={toggleNotificationCreateModal}>СОЗДАТЬ УВЕДОМЛЕНИЕ</Button></div>}
                     {
                         course.notifications.length > 0 ? 
-                        <ListGroup>
-                            {course.notifications.map((notification) =>
+                        <ListGroup id="notifications">
+                            {course.notifications.map((notification, index) =>
                                 <ListGroup.Item className="text-break"
-                                    key={notification.id}
+                                    key={index}
                                     variant={notification.isImportant? 'danger' : ''}
                                 >
                                     {notification.text}

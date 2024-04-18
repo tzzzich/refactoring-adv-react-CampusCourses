@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import {Tab, Tabs, ListGroup, Button} from 'react-bootstrap';
+import swal from 'sweetalert';
 import { addCourseTeacher, getAllUsers } from '../../utils/api/requests';
 import TeacherAddModal from './AddCourseTeacherModal';
 import StudentListElement from './StudentListElement';
@@ -32,7 +33,7 @@ function CourseParticipantsTab({course, isAdmin, isMainTeacher, isStudent, isTea
                 toggleTeacherAddModal();
             }
             catch (error) {
-                console.log(error);
+                swal("Произошла ошибка!", error, "error");
             }
         }
     };
@@ -48,7 +49,7 @@ function CourseParticipantsTab({course, isAdmin, isMainTeacher, isStudent, isTea
                             <div className="border border-top-0 rounded-bottom-1">
                                 <div className="p-4">
                                     {(isAdmin || isMainTeacher) &&<div><Button className="mb-3" onClick={toggleTeacherAddModal}>ДОБАВИТЬ ПРЕПОДАВАТЕЛЯ</Button></div>}
-                                    <ListGroup >
+                                    <ListGroup id="teachers">
                                         {course.teachers.map((teacher) =>
                                             <TeacherListElement teacher={teacher} key={teacher.email}/>
                                         )}
@@ -59,7 +60,7 @@ function CourseParticipantsTab({course, isAdmin, isMainTeacher, isStudent, isTea
                         <Tab eventKey="students" title="Студенты">
                             <div className="border border-top-0 rounded-bottom-1">
                                 <div className="p-4">
-                                    <ListGroup >
+                                    <ListGroup id="students">
                                         {course.students.map((student) =>
                                             <StudentListElement course={course} student={student} key={student.id} isAdmin={isAdmin}
                                             isTeacher={isTeacher} isMainTeacher={isMainTeacher} isStudent={isStudent} setSavedCourse={setSavedCourse}/> 

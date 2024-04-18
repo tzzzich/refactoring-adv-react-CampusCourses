@@ -10,6 +10,7 @@ import ProfilePage from './pages/profile';
 import GroupsPage from './pages/groups';
 import GroupCourses from './pages/group-courses';
 import CoursePage from './pages/course';
+import UserCoursesPage from './pages/user-courses';
 import { useEffect, useState } from 'react';
 import { getProfile } from './utils/api/requests';
 
@@ -48,6 +49,14 @@ export const App = () => {
         {
           path: ROUTES.COURSE,
           element: isAuthenticated? <CoursePage /> : <LoginPage />
+        },
+        {
+          path: ROUTES.MY_COURSES,
+          element: isAuthenticated? <UserCoursesPage title='my'/> : <LoginPage />
+        },
+        {
+          path: ROUTES.TEACHING_COURSES,
+          element: isAuthenticated? <UserCoursesPage title='teaching'/> : <LoginPage />
         },
       ],
     },
