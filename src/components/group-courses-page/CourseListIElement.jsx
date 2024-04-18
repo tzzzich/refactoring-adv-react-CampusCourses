@@ -1,9 +1,11 @@
 import { useEffect } from 'react';
 import { useState, useCallback } from 'react';
-import { ListGroup} from 'react-bootstrap';
+import { Button, ListGroup, Row} from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { deleteCourse } from '../../utils/api/requests';
+import CourseDeleteModal from './CourseDeleteModal';
 
-const CourseListElement = ({course}) => {
+const CourseListElement = ({course, refetch}) => {
 
     const semester = course.semester == 'Autumn' ? 'Осенний' : 'Весенний';
     const [statusTextColor, setStatusTextColor] = useState('');
@@ -37,11 +39,28 @@ const CourseListElement = ({course}) => {
     useEffect(() => {
         setStatus();
     }, [setStatus]);
+
+    const [showCourseDeleteModal, setShowCourseDeleteModal] = useState(false);
+
+    const toggleCourseDeleteModal = () => {
+        setShowCourseDeleteModal(!showCourseDeleteModal);
+    }
+
+    const handleDelete = async (event) => {
+        try{
+            await deleteCourse(course.id);
+            refetch();
+            toggleCourseDeleteModal();
+            swal("Успешно!", "Курс удалён!", "success");
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
       
     return (
         <>
             <ListGroup.Item
-                action 
                 className="d-flex justify-content-between align-items-start"
             >
                 <Link to={`/courses/${course.id}`} style={{ textDecoration: 'none', color: 'black' }} className='mt-2 text-break'>
@@ -54,9 +73,25 @@ const CourseListElement = ({course}) => {
                         </div> 
                 </Link>
 
-                <strong className={statusTextColor}>{statusMessage}</strong>
+                <div className="ms-2 ">
+                    <div className="d-flex justify-content-end align-items-start">
+                    <strong className={statusTextColor}>{statusMessage}</strong>
+                    </div>
+                    <div className="d-flex justify-content-end align-items-end">
+                    <Button variant="danger" className="m-1" onClick={toggleCourseDeleteModal} style={{width: '8em', alignSelf: 'flex-end'}} >
+                        УДАЛИТЬ
+                    </Button>
+                    </div>
+                </div>
+                    
+                
 
             </ListGroup.Item>
+            <CourseDeleteModal
+                toggleCourseDeleteModal={toggleCourseDeleteModal}
+                showCourseDeleteModal={showCourseDeleteModal}
+                handleDelete={handleDelete}
+            />
         </>
     )
   }

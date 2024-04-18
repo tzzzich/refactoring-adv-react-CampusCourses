@@ -15,17 +15,17 @@ const RichTextFormControl = ({ controlId, label, defaultValue}) => {
         <Form.Group controlId={controlId}>
             <Form.Label>{label}</Form.Label>
             <CKEditor
-                    editor={ ClassicEditor }
-                    onChange={ handleEditorChange}
-                    data={defaultValue}
-                />
+                editor={ClassicEditor}
+                onChange={handleEditorChange}
+                data={editorData}
+            />
             <Form.Control
-                type='hidden'
+                style={{ position: 'absolute', left: '-9999px', visibility: 'hidden' }}
                 name={controlId}
                 value={editorData}
                 required
             />
-             <Form.Control.Feedback type="invalid">
+            <Form.Control.Feedback type="invalid">
                 Поле не может быть пустым.
             </Form.Control.Feedback>
         </Form.Group>

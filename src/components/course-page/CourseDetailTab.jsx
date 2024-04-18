@@ -3,7 +3,7 @@ import {Card, Tab, Container, Tabs, ListGroup, Badge, Button} from 'react-bootst
 import { createCourseNotification } from '../../utils/api/requests';
 import NotificationCreateModal from './NotificationCreateModal';
 
-function CourseDetailTab({course}) {
+function CourseDetailTab({course, isAdmin, isTeacher, isMainTeacher, isStudent, setSavedCourse}) {
 
     const [showCreateNotificationModal, setShowCreateNotificationModal] = useState(false);
     const [notificationCreateValidated, setNotificationCreateValidated] = useState(false);
@@ -25,8 +25,16 @@ function CourseDetailTab({course}) {
                     text: event.target.text.value,
                     isImportant: event.target.isImportant.checked
                 })
-                console.log(event.target.isImportant.checked)
-                window.location.reload();
+                console.log(course.notifications)
+                setSavedCourse(course => {
+                    const newNotifications = [...course.notifications, {
+                        text: event.target.text.value,
+                        isImportant: event.target.isImportant.checked
+                    }];
+                    return { ...course, notifications: newNotifications };
+                })
+                setNotificationCreateValidated(false);
+                toggleNotificationCreateModal();
             }
             catch (error) {
                 console.log(error);
@@ -76,7 +84,7 @@ function CourseDetailTab({course}) {
             <Tab eventKey="notifications" title={notificationsTitle}>
                 <div className="border border-top-0 rounded-bottom-1">
                     <div className="p-4">   
-                        <div><Button className="mb-3" onClick={toggleNotificationCreateModal}>СОЗДАТЬ УВЕДОМЛЕНИЕ</Button></div>
+                        {(isAdmin || isTeacher) &&<div><Button className="mb-3" onClick={toggleNotificationCreateModal}>СОЗДАТЬ УВЕДОМЛЕНИЕ</Button></div>}
                     {
                         course.notifications.length > 0 ? 
                         <ListGroup>

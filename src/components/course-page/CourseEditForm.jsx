@@ -5,20 +5,11 @@ import RichTextFormControl from '../ui/RichTextFormControl'
 import { useState } from 'react';
 
 
-const CourseEditForm = ({handleSubmit, validated, isAdmin, course}) => {
+const CourseEditForm = ({handleSubmit, validated, isAdmin, canEdit, course}) => {
 
     const [semesterData, setSemesterData] = useState(course.semester);
 
-    const getAllUsersQuery = useQuery({
-        queryKey: ['users'],
-        queryFn: () =>getAllUsers(), 
-        select: ({ data }) => {
-            console.log(data)
-            return data.map((user) => (
-                <option value={user.id}>{user.fullName}</option>
-            ));
-        }
-    });
+    
 
     const handleSemesterChange = (event) => {
         setSemesterData(event.target.value);
@@ -84,6 +75,7 @@ const CourseEditForm = ({handleSubmit, validated, isAdmin, course}) => {
                                         name="semester"
                                         type='radio'
                                         id={`semester-radio-1`}
+                                        defaultChecked={course.semester === "Autumn"}
                                         onChange={handleSemesterChange}
                                     />
                                     <Form.Check
@@ -94,7 +86,7 @@ const CourseEditForm = ({handleSubmit, validated, isAdmin, course}) => {
                                         type='radio'
                                         required
                                         id={`semester-radio-2`}
-                                        defaultValue={course.semester}
+                                        defaultChecked={course.semester === "Spring"}
                                         onChange={handleSemesterChange}
                                     />
                                     {
@@ -131,20 +123,7 @@ const CourseEditForm = ({handleSubmit, validated, isAdmin, course}) => {
                     />
                 </Row>
                 {
-                    isAdmin ? 
-                    (
-                        <Row className="mb-3">
-                            <Form.Group controlId="mainTeacherId">
-                                <Form.Label>Основной преподаватель курса</Form.Label>
-                                <Form.Select aria-label="mainTeacherId" disabled defaultValue={course.mainTeacherId}>
-                                    {getAllUsersQuery.isLoading ? (<option>Загрузка</option>) : getAllUsersQuery.data}
-                                </Form.Select>
-                            </Form.Group>
-                        </Row>
-
-                    )
-                    :
-                    null
+                    
                 }
                 
             </Form>

@@ -6,7 +6,7 @@ import TeacherAddModal from './AddCourseTeacherModal';
 import StudentListElement from './StudentListElement';
 import TeacherListElement from './TeacherListElement';
 
-function CourseParticipantsTab({course, isAdmin}) {
+function CourseParticipantsTab({course, isAdmin, isMainTeacher, isStudent, isTeacher, setSavedCourse}) {
 
     const [showAddTeacherModal, setShowAddTeacherModal] = useState(false);
     const [teacherAddValidated, setTeacherAddValidated] = useState(false);
@@ -24,10 +24,12 @@ function CourseParticipantsTab({course, isAdmin}) {
         } else {
             setTeacherAddValidated(true);
             try{
-                await addCourseTeacher( course.id, {
+                const response = await addCourseTeacher( course.id, {
                     userId: event.target.teacherId.value
                 })
-                window.location.reload();
+                setSavedCourse(response.data)
+                setTeacherAddValidated(false);
+                toggleTeacherAddModal();
             }
             catch (error) {
                 console.log(error);
@@ -45,7 +47,7 @@ function CourseParticipantsTab({course, isAdmin}) {
                         <Tab eventKey="teachers" title="Преподаватели">
                             <div className="border border-top-0 rounded-bottom-1">
                                 <div className="p-4">
-                                    <div><Button className="mb-3" onClick={toggleTeacherAddModal}>ДОБАВИТЬ ПРЕПОДАВАТЕЛЯ</Button></div>
+                                    {(isAdmin || isMainTeacher) &&<div><Button className="mb-3" onClick={toggleTeacherAddModal}>ДОБАВИТЬ ПРЕПОДАВАТЕЛЯ</Button></div>}
                                     <ListGroup >
                                         {course.teachers.map((teacher) =>
                                             <TeacherListElement teacher={teacher} key={teacher.email}/>
@@ -59,7 +61,8 @@ function CourseParticipantsTab({course, isAdmin}) {
                                 <div className="p-4">
                                     <ListGroup >
                                         {course.students.map((student) =>
-                                            <StudentListElement student={student} key={student.id} isAdmin={isAdmin}/>
+                                            <StudentListElement course={course} student={student} key={student.id} isAdmin={isAdmin}
+                                            isTeacher={isTeacher} isMainTeacher={isMainTeacher} isStudent={isStudent} setSavedCourse={setSavedCourse}/> 
                                         )}
                                     </ListGroup>
                                 </div>

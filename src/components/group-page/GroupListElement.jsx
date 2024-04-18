@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { editGroup, deleteGroup } from '../../utils/api/requests';
-import { ListGroup, Button} from 'react-bootstrap';
+import { ListGroup, Button, Col} from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import GroupDeleteModal from './GroupDeleteModal';
 import GroupEditModal from './GroupEditModal';
 
-const GroupListElement = ({isAdmin, group}) => {
+const GroupListElement = ({isAdmin, group, refetch}) => {
 
     const [showGroupDeleteModal, setShowGroupDeleteModal] = useState(false);
     const [showGroupEditModal, setShowGroupEditModal] = useState(false);
@@ -22,10 +22,12 @@ const GroupListElement = ({isAdmin, group}) => {
     const handleDelete = async (event) => {
         try{
             await deleteGroup(group.id);
-            window.location.reload();
+            toggleGroupDeleteModal();
+            swal("Успешно!", "Группа удалена", "success");
+            refetch();
         }
         catch (error) {
-            console.log(error);
+            swal("Произошла ошибка при удалении группы!", error, "error");
         }
     }
 
@@ -41,10 +43,13 @@ const GroupListElement = ({isAdmin, group}) => {
                 await editGroup( {
                     name: event.target.name.value
                 }, group.id )
-                window.location.reload();
+                setgroupEditValidated(false);
+                toggleGroupEditModal();
+                swal("Успешно!", "Группа отредактирована!", "success");
+                refetch();
             }
             catch (error) {
-                console.log(error);
+                swal("Произошла ошибка при редактировании группы!", error, "error");
             }
         }
     };
@@ -53,24 +58,27 @@ const GroupListElement = ({isAdmin, group}) => {
     return (
         <>
                 <ListGroup.Item
-                    action 
                     className="d-flex justify-content-between align-items-center"
                 >
-                    <Link to={`/groups/${group.id}`} state={{groupTitle:group.name}} style={{ textDecoration: 'none', textColor:'inherit' }}>
+                    <Col>
+                    <Link to={`/groups/${group.id}`} state={{groupTitle:group.name}} className="text-break" style={{ textDecoration: 'none', textColor:'inherit' }}>
                         {group.name}
                     </Link>
+                    
+                    </Col>
                     {
                         isAdmin ? (
                         <>  
-                            <div>
+                            <>
+                                
                                 <Button variant='warning' className="m-1" onClick={toggleGroupEditModal}>
                                     РЕДАКТИРОВАТЬ
                                 </Button>
-
+                                
                                 <Button variant="danger" className="m-1" onClick={toggleGroupDeleteModal}>
                                     УДАЛИТЬ
                                 </Button>
-                            </div>
+                            </>
                             <GroupDeleteModal 
                                 toggleGroupDeleteModal={toggleGroupDeleteModal}
                                 showGroupDeleteModal={showGroupDeleteModal}

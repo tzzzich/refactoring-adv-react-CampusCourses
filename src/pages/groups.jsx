@@ -4,6 +4,7 @@ import { Spinner, ListGroup, Card, Button } from 'react-bootstrap';
 import GroupListElement from '../components/group-page/GroupListElement';
 import { useState, useEffect } from 'react';
 import GroupCreateModal from '../components/group-page/GroupCreateModal';
+import swal from 'sweetalert';
 
 
 const GroupsPage = () => {
@@ -27,7 +28,7 @@ const GroupsPage = () => {
     queryFn: getGroups,
     select: ({ data }) => {
       return data.map((group) => (
-        <GroupListElement group = {group} key={group.id} isAdmin = {rolesData.isAdmin}/>
+        <GroupListElement group = {group} key={group.id} refetch={refetchGroups} isAdmin = {rolesData.isAdmin}/>
       ));
     }
   });
@@ -44,13 +45,20 @@ const GroupsPage = () => {
             await createGroup( {
                 name: event.target.name.value
             })
-            window.location.reload();
+            setgroupCreateValidated(false);
+            toggleGroupCreateModal();
+            getGroupsQuery.refetch();
+            swal("Успешно!", "Группа создана", "success");
         }
         catch (error) {
-            console.log(error);
+            swal("Произошла ошибка при создании группы!", error, "error");
         }
     }
 };
+
+  const refetchGroups = () => {
+      getGroupsQuery.refetch();
+  }
 
   const toggleGroupCreateModal = () => {
     setShowGroupCreateModal(!showGroupCreateModal);

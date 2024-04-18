@@ -1,14 +1,20 @@
 import { useState } from 'react';
 import { ListGroup, Card, Button} from 'react-bootstrap';
-import { editCourse, editRequirementsAndAnnotationsCourse } from '../../utils/api/requests';
+import { changeCourseStatus, editCourse, editRequirementsAndAnnotationsCourse, signUpForCourse } from '../../utils/api/requests';
 import CourseEditModal from './CourseEditModal';
+import CourseStatusEditModal from './CourseStatusEditModal';
 
-function CourseDetail({course, isAdmin}) {
+function CourseDetail({course, isAdmin, isTeacher, isMainTeacher, isStudent, setSavedCourse}) {
+
 
   console.log(course)
 
   const [showCourseEditModal, setShowCourseEditModal] = useState(false);
   const [courseEditValidated, setCourseEditValidated] = useState(false);
+
+  function toggleCourseEditModal () {
+    setShowCourseEditModal(!showCourseEditModal);
+  }
 
   const handleCourseEditSubmit = async (event) => {
       event.preventDefault();
@@ -19,22 +25,27 @@ function CourseDetail({course, isAdmin}) {
       } else {
           setCourseEditValidated(true);
           try{
-              isAdmin? 
-                await editCourse( {
+              if (isAdmin){
+                const response = await editCourse( {
                     name: event.target.name.value,
                     startYear: event.target.startYear.value,
                     maximumStudentsCount: event.target.maximumStudentsCount.value,
                     semester: event.target.semester.value,
                     requirements: event.target.requirements.value,
                     annotations: event.target.annotations.value,
-                    mainTeacherId: event.target.mainTeacherId.value
-                }, course.id )
-              :
-              await editRequirementsAndAnnotationsCourse( {
+                    mainTeacherId: course.mainTeacherId
+                }, course.id );
+                setSavedCourse(response);
+              }
+              else {
+              const response = await editRequirementsAndAnnotationsCourse( {
                   requirements: event.target.requirements.value,
                   annotations: event.target.annotations.value
               }, course.id )
-              //window.location.reload();
+              setSavedCourse(response);
+            }
+              setCourseEditValidated(false);
+              toggleCourseEditModal();
           }
           catch (error) {
               console.log(error);
@@ -42,10 +53,46 @@ function CourseDetail({course, isAdmin}) {
       }
   };
   
-  function toggleCourseEditModal () {
-    setShowCourseEditModal(!showCourseEditModal);
+
+  const [showCourseStatusEditModal, setShowCourseStatusEditModal] = useState(false);
+  const [courseStatusEditValidated, setCourseStatusEditValidated] = useState(false);
+
+  const handleCourseStatusEditSubmit = async (event) => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      if (form.checkValidity() === false) {
+        event.stopPropagation();
+        setCourseStatusEditValidated(true);
+      } else {
+          setCourseStatusEditValidated(true);
+          try{
+              const responce = await changeCourseStatus(
+                {
+                  status: event.target.status.value
+                }, course.id)
+                setSavedCourse(responce);
+                setCourseStatusEditValidated(false);
+                toggleCourseStatusEditModal();
+
+          }
+          catch (error) {
+              console.log(error);
+          }
+      }
+  };
+  
+  function toggleCourseStatusEditModal () {
+    setShowCourseStatusEditModal(!showCourseStatusEditModal);
   }
 
+  async function SignUp() {
+    try{
+        await signUpForCourse(course.id)
+    }
+    catch (error) {
+        console.log(error);
+    }
+  }
   
 
   let statusTextColor;
@@ -83,12 +130,20 @@ function CourseDetail({course, isAdmin}) {
     <div className="mt-2">
       <span className="d-flex justify-content-between align-items-end">
         <h5>Основные данные курса</h5>
-        <Button variant="warning" className="mb-2" onClick={toggleCourseEditModal}>РЕДАКТИРОВАТЬ</Button>
+        <div>
+        {
+          (isAdmin || isTeacher) &&
+            (<Button variant="warning" className="mb-2 ms-3" onClick={toggleCourseEditModal}>РЕДАКТИРОВАТЬ</Button>)
+        }
+        {
+          (!isStudent && course.status == "OpenForAssigning") && 
+          (<Button className="mb-2 ms-3" onClick={SignUp} >ЗАПИСАТЬСЯ НА КУРС</Button>)
+        }
+        </div>
       </span>
       <Card >
         <ListGroup variant="flush" className="w-100">
           <ListGroup.Item
-              action 
               className="d-flex justify-content-between align-items-stretch"
           >
             <div className="ms-2 me-auto">
@@ -96,11 +151,11 @@ function CourseDetail({course, isAdmin}) {
               <div className={statusTextColor}>{statusMessage}</div>
             </div>
             <div  className="d-flex align-items-stretch">
-             <Button variant="warning" className="flex-grow-1">ИЗМЕНИТЬ</Button>
+             {(isAdmin || isTeacher) && 
+             <Button variant="warning" className="flex-grow-1" onClick={toggleCourseStatusEditModal}>ИЗМЕНИТЬ</Button>}
             </div>
           </ListGroup.Item>
           <ListGroup.Item
-                      action 
                       className="d-flex justify-content-between align-items-start"
                   >
                     <div className="ms-2 me-auto">
@@ -113,7 +168,6 @@ function CourseDetail({course, isAdmin}) {
                     </div>
           </ListGroup.Item>
           <ListGroup.Item
-                      action 
                       className="d-flex justify-content-between align-items-start"
                   >
                     <div className="ms-2 me-auto">
@@ -126,7 +180,6 @@ function CourseDetail({course, isAdmin}) {
                     </div>
           </ListGroup.Item>
           <ListGroup.Item
-                      action 
                       className="d-flex justify-content-between align-items-start"
                   >
                     <div className="ms-2 me-auto">
@@ -137,7 +190,11 @@ function CourseDetail({course, isAdmin}) {
         </ListGroup>
       </Card>
       <CourseEditModal show={showCourseEditModal} onClose={toggleCourseEditModal} 
-        onSubmit={handleCourseEditSubmit} validated={courseEditValidated} 
+        handleSubmit={handleCourseEditSubmit} validated={courseEditValidated} 
+        isAdmin={isAdmin} course={course}
+        />
+        <CourseStatusEditModal show={showCourseStatusEditModal} onClose={toggleCourseStatusEditModal} 
+        handleSubmit={handleCourseStatusEditSubmit} validated={courseStatusEditValidated} 
         isAdmin={isAdmin} course={course}
         />
 

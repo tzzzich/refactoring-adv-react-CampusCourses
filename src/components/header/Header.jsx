@@ -13,11 +13,13 @@ function Header() {
   const [coursesData, setCoursesData] = useState([]);
   const [isAuth, setIsAuth] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  
 
   useEffect(() => {
       async function getUserRoles(){
           const response = await getRoles();
           setRoles(response.data);
+          localStorage.setItem("roles", response.data);
       }
       getUserRoles();
   }, []);
@@ -28,6 +30,7 @@ function Header() {
         console.log(response.data)
         setIsAuth(response.data != undefined && response.data != null);
         setProfileData(response.data);
+        localStorage.setItem("email", response.data.email);
     }
     getUserProfile();
   }, []);
@@ -68,10 +71,8 @@ function Header() {
               {isAuth ? (
                 <>
                   <Nav.Link as={Link} to="/groups" >Группы курсов</Nav.Link>
-                  {rolesData?.isStudent && coursesData.size > 0 ? (
-                    <Nav.Link as={Link} to="/courses/my">Мои курсы</Nav.Link>
-                  ) : null
-                  }
+                  {rolesData?.isStudent &&
+                    <Nav.Link as={Link} to="/courses/my">Мои курсы</Nav.Link>}
                   {rolesData?.isTeacher ? (
                     <Nav.Link as={Link} to="/courses/teaching" >Преподаваемые курсы </Nav.Link>
                   ) : null

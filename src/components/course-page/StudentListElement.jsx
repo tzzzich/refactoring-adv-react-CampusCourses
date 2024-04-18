@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Badge, Button, ListGroup} from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { gradeStudent, setStudentRequestStatus } from '../../utils/api/requests';
+import StudentGradeModal from './StudentGradeModal';
 
 function translate(mark) {
     switch(mark) {
@@ -36,11 +38,98 @@ function getBgColor(mark) {
     }
 }
 
-const StudentListElement = ({student, isAdmin}) => {
+const StudentListElement = ({course, student, isAdmin, isStudent, isTeacher, isMainTeacher, setSavedCourse}) => {
 
     const [statusTextColor, setStatusTextColor] = useState('');
     const [statusMessage, setStatusMessage] = useState('');
     const [studentInteraction, setStudentInteraction] = useState(null);
+    const [markType, setMarkType] = useState("");
+
+    const [showStudentMidtermGradeModal, setShowStudentMidtermGradeModal] = useState(false);
+    const [StudentMidtermGradeValidated, setStudentMidtermGradeValidated] = useState(false);
+    const [showStudentFinalGradeModal, setShowStudentFinalGradeModal] = useState(false);
+    const [StudentFinalGradeValidated, setStudentFinalGradeValidated] = useState(false);
+
+    function toggleStudentMidtermGradeModal () {
+        setShowStudentMidtermGradeModal(!showStudentMidtermGradeModal);
+      }
+
+      function toggleStudentFinalGradeModal () {
+        setShowStudentFinalGradeModal(!showStudentFinalGradeModal);
+      }
+
+    const handleStudentGradeSubmit = async (event) => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        if (form.checkValidity() === false) {
+          event.stopPropagation();
+          if (markType == "Final"){
+            setStudentFinalGradeValidated(true)
+        } else {
+            setStudentMidtermGradeValidated(true)
+        }
+        } else {
+            if (markType == "Final"){
+                setStudentFinalGradeValidated(true)
+            } else {
+                setStudentMidtermGradeValidated(true)
+            }
+            
+            console.log(StudentFinalGradeValidated, StudentMidtermGradeValidated)
+            try{
+                  await gradeStudent( {
+                        markType: markType,
+                        mark: event.target.mark.value
+                  }, course.id, student.id )
+            }
+            catch (error) {
+                console.log(error);
+            }
+            const fieldName = markType == "Final" ? 'finalResult': 'midtermResult';
+            updateStudentField(student.id, fieldName, event.target.mark.value);
+            setStudentFinalGradeValidated(false)
+            setStudentMidtermGradeValidated(false)
+            if (markType == "Final"){
+                toggleStudentFinalGradeModal()
+            } else {
+                toggleStudentMidtermGradeModal()
+            }
+            //window.location.reload();
+        }
+    };
+
+    const updateStudentField = (studentId, fieldName, newValue) => {
+        setSavedCourse(course => {
+            const updatedStudents = course.students.map(student => {
+                if (student.id === studentId) {
+                    return {
+                        ...student,
+                        [fieldName]: newValue
+                    };
+                }
+                return student;
+            });
+            return {
+                ...course,
+                students: updatedStudents
+            };
+        });
+    };
+
+    async function setStudentStatus (status) {
+        try{
+            await setStudentRequestStatus( {
+                  status: status
+            }, course.id, student.id )
+            updateStudentField(student.id, 'status', status);
+      }
+      catch (error) {
+          console.log(error);
+      }
+      //window.location.reload()
+    }
+
+
 
 
     const setStatus = useCallback(() => {
@@ -49,9 +138,12 @@ const StudentListElement = ({student, isAdmin}) => {
                 setStatusTextColor('text-primary')
                 setStatusMessage('в очереди')
                 setStudentInteraction((
-                    <div className="d-flex align-items-center gap-2">
-                        <Button  className='mr-2'>принять</Button>
-                        <Button variant='danger'>отклонить заявку</Button>
+                    <div className="d-flex align-items-stretch gap-2">
+                        {
+                        (course.studentsEnrolledCount < course.maximumStudentsCount) && 
+                        <Button  className='mr-2 ' onClick={()=> setStudentStatus("Accepted")}>принять</Button>
+                        }
+                        <Button variant='danger' onClick={() => setStudentStatus("Declined")}>отклонить заявку</Button>
                     </div>
                 ))
                 break;
@@ -62,12 +154,24 @@ const StudentListElement = ({student, isAdmin}) => {
                 setStudentInteraction((
                     <>
                         <div className="ms-2 me-auto">
-                                <div className="text-muted">Промежуточная аттестация - 
+                                <div className="text-muted">
+                                    {(isAdmin || isTeacher)?
+                                        <a href="#" 
+                                        onClick={(event) =>{event.preventDefault(); setMarkType("Midterm"); toggleStudentMidtermGradeModal()}}
+                                        >Промежуточная аттестация - </a>
+                                        :
+                                        'Промежуточная аттестация -'
+                                    }
                                     <Badge className="m-1" bg={getBgColor(student.midtermResult)}>{translate(student.midtermResult)}</Badge>
                                 </div>
                         </div> 
                         <div className="ms-2 me-auto">
-                                <div className="text-muted">Финальная аттестация - 
+                                <div className="text-muted">
+                                    {(isAdmin || isTeacher)?
+                                        <a href="#" onClick={(event) => {event.preventDefault(); setMarkType("Final"); toggleStudentFinalGradeModal()}}> Финальная аттестация - </a>
+                                        :
+                                        'Финальная аттестация -'
+                                    }
                                     <Badge className="m-1" bg={getBgColor(student.finalResult)}>{translate(student.finalResult)}</Badge>
                                 </div>
 
@@ -79,11 +183,13 @@ const StudentListElement = ({student, isAdmin}) => {
             case "Declined":{
                 setStatusTextColor('text-danger')
                 setStatusMessage('отклонён')
+                setStudentInteraction(null);
                 break;
             }
             default:{
                 setStatusTextColor('')
                 setStatusMessage(student.status)
+                setStudentInteraction(null);
                 break;
             }
         }
@@ -111,11 +217,21 @@ const StudentListElement = ({student, isAdmin}) => {
 
                 <>
                     {
-                        isAdmin && studentInteraction
+                        (isAdmin || isTeacher 
+                            || isStudent && student.email === localStorage.getItem("email")
+                        )&& studentInteraction
                     }
                 </>
-
+            
             </ListGroup.Item>
+            <StudentGradeModal show={showStudentFinalGradeModal} onClose={toggleStudentFinalGradeModal} 
+                handleSubmit={handleStudentGradeSubmit} validated={StudentFinalGradeValidated} student={student}
+                markType="Final"
+            />  
+            <StudentGradeModal show={showStudentMidtermGradeModal} onClose={toggleStudentMidtermGradeModal} 
+                handleSubmit={handleStudentGradeSubmit} validated={StudentMidtermGradeValidated} student={student}
+                markType="Midterm"
+            />                                
         </>
     )
   }

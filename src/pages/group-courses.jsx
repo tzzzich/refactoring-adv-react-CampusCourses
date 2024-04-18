@@ -29,8 +29,9 @@ const GroupCourses = () => {
         queryKey: ['courses'],
         queryFn: () => getGroupCourses(id), 
         select: ({ data }) => {
+            console.log(data);
             return data.map((course) => (
-                <CourseListElement course={course} id ={course.id} key={course.id}/>
+                <CourseListElement course={course} refetch={refetchCourses} id ={course.id} key={course.id}/>
             ));
         }
     });
@@ -57,13 +58,20 @@ const GroupCourses = () => {
                     annotations: event.target.annotations.value,
                     mainTeacherId: event.target.mainTeacherId.value
                 }, id)
-                window.location.reload();
+                setCourseCreateValidated(false);
+                toggleCourseCreateModal();
+                getGroupCoursesQuery.refetch();
+                swal("Успешно!", "Курс создан", "success");
             }
             catch (error) {
-                //console.log(error);
+                swal("Произошла ошибка при создании курса!", error, "error");
             }
         }
     };
+
+    const refetchCourses = () => {
+        getGroupCoursesQuery.refetch();
+    }
     
 
     return (
@@ -89,12 +97,13 @@ const GroupCourses = () => {
                     />
                 </>)}
                     <Card className='m-5'>
-                        {getGroupCoursesQuery.data.length > 0 && (
-                            <ListGroup variant="flush" className="w-100">
-                                {getGroupCoursesQuery.data}
-                            </ListGroup>
-                        )}
-                        { getGroupCoursesQuery.data.length == 0 && (<h3 className='m-5'>К сожалению, курсов в этой группе ещё нет.</h3>)}
+                    {getGroupCoursesQuery.data && getGroupCoursesQuery.data.length > 0 ? (
+                        <ListGroup variant="flush" className="w-100">
+                            {getGroupCoursesQuery.data}
+                        </ListGroup>
+                    ) : (
+                        <h3 className='m-5'>К сожалению, курсов в этой группе ещё нет.</h3>
+                    )}
                     </Card>
                 </>
                 )
