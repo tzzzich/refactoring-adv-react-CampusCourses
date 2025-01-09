@@ -1,11 +1,11 @@
-import axios from 'axios';
+import axios from "axios";
 
-import {BASEURL} from '../constants/baseUrl'
+import { BASEURL } from "../constants/baseUrl";
 
 export const api = axios.create({
-    baseURL: BASEURL,
-    headers: {
-        'Authorization': `Bearer ${localStorage.getItem("token")}`,
-        'Content-Type': 'application/json'
-    }
+  baseURL: BASEURL,
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+    "Content-Type": "application/json",
+  },
 });

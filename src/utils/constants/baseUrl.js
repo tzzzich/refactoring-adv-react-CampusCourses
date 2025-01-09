@@ -1,2 +1,1 @@
-export const BASEURL = 'https://camp-courses.api.kreosoft.space';
-  
+export const BASEURL = "https://camp-courses.api.kreosoft.space";

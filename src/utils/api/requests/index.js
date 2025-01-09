@@ -1,5 +1,5 @@
-export * from './userRequests'
+export * from "./userRequests";
 
-export * from './groupsRequests'
+export * from "./groupsRequests";
 
-export * from './coursesRequests'
+export * from "./coursesRequests";
